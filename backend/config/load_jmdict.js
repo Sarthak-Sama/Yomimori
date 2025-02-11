@@ -15,7 +15,7 @@ mongoose.connect(uri);
 console.log("Current directory:", process.cwd());
 
 const parser = new xml2js.Parser();
-const filePath = "./config/JMdict_e_examp";
+const filePath = "./config/JMdict_e";
 
 // Function to remove entity definitions and references
 function preprocessXML(data) {
@@ -82,17 +82,6 @@ fs.readFile(filePath, "utf8", (err, data) => {
       }
       const englishMeaning = definitions.join("; ");
 
-      // Get JLPT information if present in a <misc> element.
-      let jlptLevel = "";
-      if (entry.misc) {
-        for (const misc of entry.misc) {
-          if (misc && misc.toLowerCase().includes("jlpt")) {
-            jlptLevel = misc;
-            break;
-          }
-        }
-      }
-
       // For example sentence, leave empty (or later you can try to match sentences).
       const exampleSentence = "";
 
@@ -101,8 +90,6 @@ fs.readFile(filePath, "utf8", (err, data) => {
           word,
           reading,
           englishMeaning,
-          exampleSentence,
-          jlptLevel,
         });
         try {
           await doc.save();
