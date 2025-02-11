@@ -17,7 +17,7 @@ app.use(
       "http://localhost:5173",
       "https://p652kfhs-3000.inc1.devtunnels.ms",
       "https://55lybk-ip-202-41-10-109.tunnelmole.net",
-      "https://yomimori.vercel.app/",
+      "https://yomimori.vercel.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     credentials: true, // Allow cookies
