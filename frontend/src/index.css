@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "kollektif";
+  src: url("/fonts/Kollektif.ttf");
+}
+
+@font-face {
+  font-family: "kollektif";
+  src: url("/fonts/Kollektif-Bold.ttf");
+  font-weight: 900;
+}
+
+@font-face {
+  font-family: "Ortland";
+  src: url("/fonts/Ortland.otf");
+}
+
+@font-face {
+  font-family: "nicomoji";
+  src: url("/fonts/nicomoji.ttf");
+}
+
+@font-face {
+  font-family: "boldKana";
+  src: url("/fonts/boldKana.ttf");
+}
+
+* {
+  font-family: "kollektif";
+  box-sizing: border-box;
+}
+/* STYLING SCROLLBAR */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+  background-color: #fcf4e7;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #fcf4e7;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #2d2e26;
+}
+
+/* STYLING TEXT SELECTION */
+
+::selection {
+  background-color: #2d2e26;
+  color: #fcf4e7;
+}
+
+/* For Firefox */
+::-moz-selection {
+  background-color: #2d2e26;
+  color: #fcf4e7;
+}
+
+select option:hover {
+  background-color: #2d2e26;
+}

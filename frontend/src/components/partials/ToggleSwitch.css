@@ -1,0 +1,78 @@
+.toggle-switch {
+  position: relative;
+  width: 60px; /* Increase the width to accommodate the text */
+  display: inline-block;
+  text-align: left;
+  top: 10px;
+}
+
+.toggle-switch-checkbox {
+  display: none;
+}
+
+.toggle-switch-label {
+  display: block;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  position: relative; /* Add relative positioning */
+}
+
+.toggle-switch-inner {
+  display: block;
+  width: 200%;
+  margin-left: -100%;
+  transition: margin 0.3s ease-in 0s;
+}
+
+.toggle-switch-inner:before,
+.toggle-switch-inner:after {
+  display: block;
+  float: left;
+  width: 50%;
+  height: 20px;
+  padding: 0;
+  line-height: 20px;
+  font-size: 14px;
+  color: white;
+  font-weight: bold;
+  box-sizing: border-box;
+}
+
+.toggle-switch-inner:before {
+  content: "ON";
+  padding-left: 10px;
+  background-color: #34c759;
+  color: #fff;
+}
+
+.toggle-switch-inner:after {
+  content: "OFF";
+  padding-right: 10px;
+  background-color: #ddd;
+  color: #fff;
+  text-align: right;
+}
+
+.toggle-switch-switch {
+  display: block;
+  width: 18px;
+  margin: 1px;
+  background: #fff;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 38px; /* Adjust the right position */
+  border: 2px solid #ddd;
+  border-radius: 20px;
+  transition: all 0.3s ease-in 0s;
+}
+
+.toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-inner {
+  margin-left: 0;
+}
+
+.toggle-switch-checkbox:checked + .toggle-switch-label .toggle-switch-switch {
+  right: 0px;
+}
