@@ -77,6 +77,7 @@ function ContentProvider({ children }) {
   return (
     <ContentContext.Provider
       value={{
+        user,
         fetchedUser,
         setFetchedUser,
         jlptLevel,

@@ -17,7 +17,10 @@ function App() {
   return (
     <div className="w-screen h-screen bg-[#fcf4e7] text-[#2D2E26] relative">
       <Routes>
-        <Route path="/" element={<Homepage />} />
+        <Route
+          path="/"
+          element={<Homepage setIsLoginBoxVisible={setIsLoginBoxVisible} />}
+        />
         <Route
           path="/admin"
           element={

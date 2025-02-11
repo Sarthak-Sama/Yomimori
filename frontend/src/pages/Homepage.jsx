@@ -6,11 +6,12 @@ import GenerationForm from "../components/GenerationForm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
-function Homepage() {
+function Homepage({ setIsLoginBoxVisible }) {
   const [isMobile, setIsMobile] = useState(false);
   const [isgenFormOpen, setIsGenFormOpen] = useState(false);
   // Fetch archive content when component mounts and when jlptLevel changes
   const {
+    user,
     jlptLevel,
     setJlptLevel,
     genratedContentJlptLevel,
@@ -170,7 +171,13 @@ function Homepage() {
               {generatedContentArray ? (
                 <>
                   <div
-                    onClick={() => setIsGenFormOpen(true)}
+                    onClick={() => {
+                      if (user) {
+                        setIsGenFormOpen(true);
+                      } else {
+                        setIsLoginBoxVisible(true);
+                      }
+                    }}
                     className="w-[15rem] aspect-[4/5] border-2 rounded-xl overflow-hidden flex flex-col justify-center items-center relative group"
                   >
                     <span className="scale-[0.7] group-hover:scale-[1.5] transition-all duration-300 ease-out">
