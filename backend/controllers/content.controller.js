@@ -239,6 +239,10 @@ const fetchUserContent = async (req, res) => {
     // Assumes an authentication middleware has attached the user document to req.user
     // Alternatively, you could extract the user ID from Clerk's getAuth(req) function.
     const { userId } = getAuth(req);
+    if (!userId) {
+      // User is not logged in—return an empty array.
+      return res.json([]);
+    }
 
     const { jlptLevel, page = 1 } = req.query;
     const limit = 10;
