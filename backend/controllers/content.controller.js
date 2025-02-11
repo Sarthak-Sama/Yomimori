@@ -241,7 +241,7 @@ const fetchUserContent = async (req, res) => {
     const { userId } = getAuth(req);
     if (!userId) {
       // User is not logged in—return an empty array.
-      return res.json([]);
+      return res.status(200).json({ success: true, contents: [] });
     }
 
     const { jlptLevel, page = 1 } = req.query;

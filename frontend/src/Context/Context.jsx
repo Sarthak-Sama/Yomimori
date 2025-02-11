@@ -47,7 +47,6 @@ function ContentProvider({ children }) {
           page: page,
         },
       });
-      console.log(response);
       // Check if the API responded with success and then update your state
       if (response.data.success) {
         setGeneratedContentArray(response.data.contents);

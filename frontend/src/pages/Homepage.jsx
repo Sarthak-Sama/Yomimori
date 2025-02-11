@@ -43,6 +43,8 @@ function Homepage({ setIsLoginBoxVisible }) {
     };
   }, []);
 
+  console.log(generatedContentArray);
+
   return (
     <div className="w-full h-full overflow-x-hidden overflow-y-scroll pl-15 py-10">
       <div>
