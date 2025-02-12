@@ -17,6 +17,7 @@ function ReadingPage() {
   const [popupPosition, setPopupPosition] = useState({ left: 0, top: 0 });
   const [openContent, setOpenContent] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const longPressTimerRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -108,6 +109,20 @@ function ReadingPage() {
     }
   };
 
+  const handleTouchStart = (token, index, e) => {
+    e.stopPropagation();
+    longPressTimerRef.current = setTimeout(() => {
+      handleTokenClick(token, index, e);
+    }, 500); // 1 second long press
+  };
+
+  const handleTouchEnd = (e) => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+  };
+
   return (
     <div
       className="relative w-full h-full overflow-y-scroll p-4 pl-10 pt-10 md:pl-15 md:pr-10 md:py-10"
@@ -169,7 +184,13 @@ function ReadingPage() {
                   ? "bg-[#2D2E26] text-[#fcf4e7]"
                   : ""
               }`}
-              onClick={(e) => handleTokenClick(token, index, e)}
+              onClick={
+                !isMobile ? (e) => handleTokenClick(token, index, e) : undefined
+              }
+              onTouchStart={
+                isMobile ? (e) => handleTouchStart(token, index, e) : undefined
+              }
+              onTouchEnd={isMobile ? handleTouchEnd : undefined}
             >
               {showFurigana && token.reading !== token.surface ? (
                 <ruby>
