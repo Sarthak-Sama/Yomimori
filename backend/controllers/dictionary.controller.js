@@ -17,9 +17,18 @@ const getEntryByWord = async (req, res) => {
   const { word } = req.params;
   try {
     // Use $or to check if either 'word' or 'reading' matches the param's word
-    const entry = await DictionaryEntry.findOne({
+    let entry = await DictionaryEntry.findOne({
       $or: [{ word: word }, { reading: word }],
     });
+
+    if (!entry) {
+      entry = await DictionaryEntry.findOne({
+        $or: [
+          { word: { $regex: word, $options: "i" } },
+          { reading: { $regex: word, $options: "i" } },
+        ],
+      });
+    }
 
     if (!entry) {
       return res.status(404).json({ message: "Word not found" });
