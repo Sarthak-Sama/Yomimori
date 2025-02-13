@@ -109,18 +109,17 @@ function ReadingPage() {
     }
   };
 
-  const handleTouchStart = (token, index, e) => {
+  const lastTapRef = useRef(0);
+  const DOUBLE_TAP_DELAY = 300; // milliseconds
+  const handleTouchEnd = (token, index, e) => {
+    e.preventDefault();
     e.stopPropagation();
-    longPressTimerRef.current = setTimeout(() => {
+    const now = Date.now();
+    if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
       handleTokenClick(token, index, e);
-    }, 500); // 1 second long press
-  };
-
-  const handleTouchEnd = (e) => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
+      // Perform double-tap action here
     }
+    lastTapRef.current = now;
   };
 
   return (
@@ -187,10 +186,9 @@ function ReadingPage() {
               onClick={
                 !isMobile ? (e) => handleTokenClick(token, index, e) : undefined
               }
-              onTouchStart={
-                isMobile ? (e) => handleTouchStart(token, index, e) : undefined
+              onTouchEnd={
+                isMobile ? (e) => handleTouchEnd(token, index, e) : undefined
               }
-              onTouchEnd={isMobile ? handleTouchEnd : undefined}
             >
               {showFurigana && token.reading !== token.surface ? (
                 <ruby>

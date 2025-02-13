@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { motion } from "framer-motion";
 import { RiUserFill } from "@remixicon/react";
 import { SignedIn, SignedOut, UserButton, useUser } from "@clerk/clerk-react";
