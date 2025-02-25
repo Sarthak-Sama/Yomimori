@@ -7,7 +7,7 @@ export const ContentContext = createContext();
 function ContentProvider({ children }) {
   const { user } = useUser();
   const [fetchedUser, setFetchedUser] = useState(null);
-
+  const [errorMessage, setErrorMessage] = useState("");
   const [generatedContentArray, setGeneratedContentArray] = useState(null);
   const [archiveContent, setArchiveContent] = useState(null);
   const [jlptLevel, setJlptLevel] = useState("N5"); // Default level
@@ -79,6 +79,8 @@ function ContentProvider({ children }) {
         user,
         fetchedUser,
         setFetchedUser,
+        errorMessage,
+        setErrorMessage,
         jlptLevel,
         setJlptLevel,
         genratedContentJlptLevel,

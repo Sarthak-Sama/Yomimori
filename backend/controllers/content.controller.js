@@ -30,38 +30,55 @@ const katakanaToHiragana = (text) => {
 /**
  * Generates a detailed prompt instructing the AI to generate both an intriguing title and the article/story content.
  */
-const buildPrompt = (genre, jlptLevel, characterCount, contentType) => {
+const buildFictionPrompt = (genre, jlptLevel, characterCount) => {
   return `
-Please generate an AI-generated Japanese ${
-    contentType === "non-fiction" ? "article" : "story"
-  } tailored for language learners.
-The content should adhere to the following guidelines:
-  
-1. **JLPT Level:** The language and vocabulary should be appropriate for a JLPT ${jlptLevel.toUpperCase()} learner.
-2. **Genre:** The content should belong to the "${genre}" genre.
-3. **Content Type:** The piece should be ${
-    contentType === "non-fiction"
-      ? "non-fiction, informative, and factual"
-      : "a fictional narrative"
-  }.
-4. **Length:** The body of the text should be approximately ${characterCount} characters in length. Do not write content less than ${characterCount} characters.
-5. **Tone and Style:** Ensure the narrative is engaging, clear, and educational—using simple language structures while maintaining interest.
-6. **Cultural Context:** Where appropriate, incorporate elements of Japanese culture to enhance the learning experience.
-${
-  contentType === "fiction" &&
-  "7. Additionally, ensure the narrative remains captivating with a dynamic, anime-inspired flair."
-}
+You are a legendary Japanese manga and story writer, celebrated for your work in epic series like *Berserk* and *Death Note*. Your storytelling is known for its intense emotion, dynamic characters, and gripping plot twists. Today, please generate an AI-generated Japanese story tailored for language learners with the following guidelines:
+
+1. **JLPT Level:** Use vocabulary and grammar appropriate for a JLPT ${jlptLevel.toUpperCase()} learner, ensuring clarity while providing a subtle challenge.
+2. **Genre:** The story should belong to the "${genre}" genre, drawing on classic anime and manga tropes.
+3. **Content:** Create a captivating fictional narrative full of passion, drama, and memorable characters. Your writing should evoke the feel of an immersive anime series, complete with emotional highs and lows.
+4. **Length:** The story must be approximately ${characterCount} characters long. Do not produce content shorter than this threshold.
+5. **Tone and Style:** The tone should be emotional, dramatic, and captivating. The narrative must pull readers into a vivid, anime-like world where they feel the stakes and connect deeply with the characters.
+6. **Cultural Context:** Integrate elements of Japanese culture, folklore, or settings to enrich the story’s authenticity.
+7. **Commitment & Impact:** Let your passion shine through every line—create a narrative that resonates deeply with readers, drawing them into a world of wonder and conflict.
+8. **Character & Plot Development:** Create characters with clear motivations and emotional depth, making their journeys feel meaningful. Develop the plot with tension and resolution, using twists, mysteries, or conflicts that reflect the thrilling, dramatic storytelling of iconic anime series.
 
 **Constraints:**
-    * Avoid using overly complex kanji, vocabulary or grammar patterns beyond the specified JLPT level.
+    * Avoid using overly complex kanji, vocabulary, or grammar structures beyond the specified JLPT level.
 
-**IMPORTANT:** Please generate the output as a JSON object with two keys: "title" and "body". The "title" should be an intriguing, creative title (not bland) that reflects the content, and the "body" should be the article or story text as described above.
+**IMPORTANT:** Generate the output as a JSON object with the keys "title" and "body". The "title" should be an intriguing, creative title that captures the essence of the narrative, and the "body" should be the complete story text.
 
 Example output:
 {
-  "title": "パン屋さん で ドキドキ！",
-  "englishTitle": "The Enchanted Cherry Blossom Mystery",
-  "body": "あつし君はパン屋さんが大好きです。  特に、メロンパンが大好きです..."
+  "title": "運命の戦士: 真夜中の約束",
+  "englishTitle": "Warriors of Fate: The Midnight Oath",
+  "body": "遥かなる夜の闇に、ユウタは己の運命と向き合う…"
+}
+`;
+};
+
+const buildNonFictionPrompt = (genre, jlptLevel, characterCount) => {
+  return `
+You are a distinguished Japanese editor and novelist, renowned for your ability to craft clear, insightful, and engaging articles. Your work enlightens readers while maintaining a polished and refined style. Today, please generate an AI-generated Japanese article tailored for language learners with the following guidelines:
+
+1. **JLPT Level:** Use vocabulary and grammar suitable for a JLPT ${jlptLevel.toUpperCase()} learner, balancing simplicity with a mild challenge.
+2. **Genre:** The article should belong to the "${genre}" genre, focusing on culturally relevant or informative themes.
+3. **Content:** Produce an informative, factual, and educational article that remains engaging and accessible. Your narrative should provide clear insights while gently introducing cultural elements where relevant.
+4. **Length:** The article should be approximately ${characterCount} characters long. Ensure that the content meets or exceeds this character count.
+5. **Tone and Style:** Write with clarity, precision, and an inviting tone—akin to a well-edited piece by a seasoned novelist. The narrative should be both educational and enjoyable.
+6. **Cultural Context:** Where applicable, incorporate elements of Japanese culture to enhance the educational experience.
+7. **Commitment to Quality:** Your writing should reflect meticulous editing and thoughtful composition, leaving readers both informed and inspired.
+
+**Constraints:**
+    * Avoid using overly complex kanji, vocabulary, or grammar structures beyond the specified JLPT level.
+
+**IMPORTANT:** Generate the output as a JSON object with the keys "title" and "body". The "title" should be a captivating, creative title that reflects the article’s content, and the "body" should be the complete article text.
+
+Example output:
+{
+  "title": "日本の伝統: 美と知識の探求",
+  "englishTitle": "Exploring Japan's Traditions: A Journey Through Beauty and Wisdom",
+  "body": "日本の伝統文化は、古くから続く美学と知識に彩られています…"
 }
 `;
 };
@@ -70,7 +87,6 @@ Example output:
  * Controller to generate content via Gemini API.
  * Expects req.body to include: genre, jlptLevel (e.g., "n5", "n4", etc.), length ("short", "long", "very long"), and contentType ("fiction" or "non-fiction").
  */
-
 const generateContent = async (req, res) => {
   const { genre, jlptLevel, length, contentType } = req.body;
 
@@ -146,12 +162,10 @@ const generateContent = async (req, res) => {
   }
 
   // Build a detailed prompt for the Gemini API
-  const prompt = buildPrompt(
-    genre,
-    jlptLevel,
-    characterCount,
-    contentType.toLowerCase()
-  );
+  const prompt =
+    contentType.toLowerCase === "fiction"
+      ? buildFictionPrompt(genre, jlptLevel, characterCount)
+      : buildNonFictionPrompt(genre, jlptLevel, characterCount);
 
   try {
     // Initialize the Gemini API client (using @google/generative-ai)

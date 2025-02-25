@@ -7,6 +7,7 @@ import AdminRoute from "./components/AdminRoute";
 import ReadingPage from "./pages/ReadingPage";
 import { SignIn } from "@clerk/clerk-react";
 import useAxiosInterceptor from "./utils/hooks/useAxiosInterceptor";
+
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoginBoxVisible, setIsLoginBoxVisible] = useState(false);

@@ -2,12 +2,12 @@ import { ContentContext } from "../Context/Context";
 import axios from "../utils/axios";
 import React, { useContext, useState } from "react";
 
-function GenerationForm({ setIsGenFormOpen }) {
+function GenerationForm({ setIsGenFormOpen, isGenerating, setIsGenerating }) {
+  console.log(isGenerating);
   const [jlptLevel, setJlptLevel] = useState("");
   const [length, setLength] = useState("");
   const [genre, setGenre] = useState("");
   const [contentType, setContentType] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
   const { setGeneratedContentArray, setFetchedUser } =
     useContext(ContentContext);
@@ -50,10 +50,10 @@ function GenerationForm({ setIsGenFormOpen }) {
   const contentTypeOptions = ["fiction", "non-fiction"];
 
   const handleSubmit = async (e) => {
-    if (isLoading) return; // Avoid multiple submissions
+    if (isGenerating) return; // Avoid multiple submissions
 
     e.preventDefault();
-    setIsLoading(true);
+    setIsGenerating(true);
 
     try {
       const response = await axios.post("/api/generateContent", {
@@ -74,7 +74,7 @@ function GenerationForm({ setIsGenFormOpen }) {
     } catch (error) {
       console.error("Error generating content", error);
     } finally {
-      setIsLoading(false);
+      setIsGenerating(false);
     }
   };
 
@@ -178,9 +178,11 @@ function GenerationForm({ setIsGenFormOpen }) {
         <div className="flex justify-end gap-4 mt-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-[#2D2E26] hover:bg-[#232221] text-xl text-white rounded w-[70%] mx-auto font-['Ortland']!"
+            className={`px-4 py-2 ${
+              isGenerating ? "bg-[#232221]" : "bg-[#2D2E26] hover:bg-[#232221]"
+            } text-xl text-white rounded w-[70%] mx-auto font-['Ortland']!`}
           >
-            {isLoading ? "Generating..." : "Generate"}
+            {isGenerating ? "Generating..." : "Generate"}
           </button>
         </div>
       </form>

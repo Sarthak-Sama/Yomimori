@@ -1,17 +1,20 @@
 import React, { useContext, useEffect, useState } from "react";
 import ContentCard from "../components/partials/ContentCard";
 import { ContentContext } from "../Context/Context";
-import { RiAddFill } from "@remixicon/react";
+import { RiAddFill, RiCloseFill } from "@remixicon/react";
 import GenerationForm from "../components/GenerationForm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 function Homepage({ setIsLoginBoxVisible }) {
   const [isMobile, setIsMobile] = useState(false);
-  const [isgenFormOpen, setIsGenFormOpen] = useState(false);
-  // Fetch archive content when component mounts and when jlptLevel changes
+  const [isGenFormOpen, setIsGenFormOpen] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
   const {
     user,
+    fetchedUser,
+    errorMessage,
+    setErrorMessage,
     jlptLevel,
     setJlptLevel,
     genratedContentJlptLevel,
@@ -26,6 +29,7 @@ function Homepage({ setIsLoginBoxVisible }) {
     const mobileBreakpoint = 768; // Define the breakpoint for mobile screens
     return window.innerWidth <= mobileBreakpoint;
   };
+
   useEffect(() => {
     const checkScreenSize = () => {
       setIsMobile(isMobileScreen());
@@ -43,8 +47,17 @@ function Homepage({ setIsLoginBoxVisible }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (errorMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage("");
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage, setErrorMessage]);
+
   return (
-    <div className="w-full h-full overflow-x-hidden overflow-y-scroll pl-15 py-10">
+    <div className="w-full h-full overflow-x-hidden overflow-y-scroll pl-15 py-10 relative">
       <div>
         <div className="w-full flex flex-col sm:flex-row justify-center sm:justify-between items-start sm:items-center sm:px-10">
           <h2 className="font-['Ortland']! text-5xl">Yomimori Archive</h2>
@@ -173,7 +186,13 @@ function Homepage({ setIsLoginBoxVisible }) {
                   <div
                     onClick={() => {
                       if (user) {
-                        setIsGenFormOpen(true);
+                        if (fetchedUser.dailyGenerationCount < 5) {
+                          setIsGenFormOpen(true);
+                        } else {
+                          setErrorMessage(
+                            "You have reached the daily generation limit. Please try again tomorrow."
+                          );
+                        }
                       } else {
                         setIsLoginBoxVisible(true);
                       }
@@ -205,13 +224,30 @@ function Homepage({ setIsLoginBoxVisible }) {
           </div>
         </div>
       </div>
-      {isgenFormOpen && (
+      {isGenFormOpen && (
         <div className="absolute left-0 top-0 w-screen h-screen">
           <div
-            onClick={() => setIsGenFormOpen(false)}
+            onClick={() => {
+              if (!isGenerating) setIsGenFormOpen(false);
+            }}
             className="w-full h-full bg-black/30"
           ></div>
-          <GenerationForm setIsGenFormOpen={setIsGenFormOpen} />
+          <GenerationForm
+            setIsGenFormOpen={setIsGenFormOpen}
+            isGenerating={isGenerating}
+            setIsGenerating={setIsGenerating}
+          />
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="fixed left-1/2 bottom-10 h-22 w-85 px-6 py-3 -translate-x-1/2 bg-black/90 text-white rounded-lg flex items-center justify-between">
+          <span>{errorMessage}</span>
+          <RiCloseFill
+            size={45}
+            className="cursor-pointer ml-4"
+            onClick={() => setErrorMessage("")}
+          />
         </div>
       )}
     </div>

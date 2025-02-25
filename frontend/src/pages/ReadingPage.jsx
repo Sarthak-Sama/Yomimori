@@ -44,18 +44,25 @@ function ReadingPage() {
         tokenContainerRef.current &&
         !tokenContainerRef.current.contains(event.target)
       ) {
+        setPopup(null);
         setSelectedTokenIndex(null);
       }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
     };
   }, []);
 
   const handleTokenClick = async (token, index, e) => {
     e.stopPropagation();
+    if (!token || !token.surface) {
+      console.error("Token or token.surface is undefined");
+      return;
+    }
     const clickX = e.clientX;
     const clickY = e.clientY;
 
@@ -111,13 +118,13 @@ function ReadingPage() {
 
   const lastTapRef = useRef(0);
   const DOUBLE_TAP_DELAY = 300; // milliseconds
+
   const handleTouchEnd = (token, index, e) => {
     e.preventDefault();
     e.stopPropagation();
     const now = Date.now();
     if (now - lastTapRef.current < DOUBLE_TAP_DELAY) {
       handleTokenClick(token, index, e);
-      // Perform double-tap action here
     }
     lastTapRef.current = now;
   };
@@ -174,37 +181,45 @@ function ReadingPage() {
       <hr className="w-full md:w-[60%] my-10" />
 
       <div ref={tokenContainerRef}>
-        {openContent ? (
-          openContent.tokens.map((token, index) => (
-            <span
-              key={index}
-              className={`inline-block cursor-pointer text-lg md:text-2xl my-2 ${
-                !!popup && selectedTokenIndex === index
-                  ? "bg-[#2D2E26] text-[#fcf4e7]"
-                  : ""
-              }`}
-              onClick={
-                !isMobile ? (e) => handleTokenClick(token, index, e) : undefined
-              }
-              onTouchEnd={
-                isMobile ? (e) => handleTouchEnd(token, index, e) : undefined
-              }
-            >
-              {showFurigana && token.reading !== token.surface ? (
-                <ruby>
-                  {token.surface}
-                  <rt className="furigana">{token.reading}</rt>
-                </ruby>
-              ) : (
-                token.surface
-              )}
-            </span>
-          ))
+        {openContent && openContent.tokens ? (
+          openContent.tokens.map((token, index) => {
+            if (!token) return null; // Skip undefined/null tokens
+            return (
+              <span
+                key={index}
+                className={`inline-block cursor-pointer text-lg md:text-2xl my-2 ${
+                  !!popup && selectedTokenIndex === index
+                    ? "bg-[#2D2E26] text-[#fcf4e7]"
+                    : ""
+                }`}
+                onClick={
+                  !isMobile && token && token.surface
+                    ? (e) => handleTokenClick(token, index, e)
+                    : undefined
+                }
+                onTouchEnd={
+                  isMobile && token && token.surface
+                    ? (e) => handleTouchEnd(token, index, e)
+                    : undefined
+                }
+              >
+                {showFurigana && token.reading !== token.surface ? (
+                  <ruby>
+                    {token.surface}
+                    <rt className="furigana">{token.reading}</rt>
+                  </ruby>
+                ) : (
+                  token.surface
+                )}
+              </span>
+            );
+          })
         ) : (
           <Skeleton count={15} height={35} />
         )}
       </div>
-      {popup && (
+
+      {popup && popup.token && (
         <div
           style={{ top: popupPosition.top, left: popupPosition.left }}
           className="absolute bg-white p-4 border border-gray-400 rounded shadow-lg"
@@ -218,19 +233,12 @@ function ReadingPage() {
             <>
               <p className="font-bold text-2xl">{popup.token.surface}</p>
               {popup.result ? (
-                <ul className="mt-2">
+                <ul className="mt-2 text-lg">
                   <li>
                     <strong>Reading:</strong> {popup.result.reading}
                   </li>
                   <li>
                     <strong>Meaning:</strong> {popup.result.englishMeaning}
-                  </li>
-                  <li>
-                    <strong>Example Sentence:</strong>{" "}
-                    {popup.result.exampleSentence}
-                  </li>
-                  <li>
-                    <strong>JLPT Level:</strong> {popup.result.jlptLevel}
                   </li>
                 </ul>
               ) : (
