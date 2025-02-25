@@ -68,7 +68,7 @@ function Navbar({ isOpen, setIsOpen, setIsLoginBoxVisible }) {
               </div>
 
               <span className="font-bold text-[5vw] sm:text-[1.25vw] mt-5">
-                {fetchedUser ? fetchedUser.dailyGenerationCount : ""} / 5
+                {fetchedUser ? fetchedUser.dailyGenerationCount : "?"} / 5
               </span>
               <h5 className="text-[4vw] text-center sm:text-[0.9vw] opacity-80 mt-5">
                 *You get to generate 5 stories/articles per day.*

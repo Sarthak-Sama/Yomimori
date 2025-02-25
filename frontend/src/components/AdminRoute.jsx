@@ -27,7 +27,11 @@ const AdminRoute = ({ children }) => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        Loading...
+      </div>
+    );
   }
 
   // If the user is not an admin, redirect to the homepage
