@@ -9,7 +9,7 @@ function GenerationForm({ setIsGenFormOpen, isGenerating, setIsGenerating }) {
   const [genre, setGenre] = useState("");
   const [contentType, setContentType] = useState("");
 
-  const { setGeneratedContentArray, setFetchedUser } =
+  const { setGeneratedContentArray, setFetchedUser, genratedContentJlptLevel } =
     useContext(ContentContext);
 
   const jlptOptions = ["N5", "N4", "N3", "N2", "N1"];
@@ -62,8 +62,9 @@ function GenerationForm({ setIsGenFormOpen, isGenerating, setIsGenerating }) {
         length,
         contentType,
       });
-
-      setGeneratedContentArray((prev) => [response.data.content, ...prev]);
+      if (genratedContentJlptLevel === jlptLevel) {
+        setGeneratedContentArray((prev) => [response.data.content, ...prev]);
+      }
       // Appening the generated content to the existing array
       setFetchedUser((prev) => ({
         ...prev,

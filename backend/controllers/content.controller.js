@@ -45,14 +45,15 @@ You are a legendary Japanese manga and story writer, celebrated for your work in
 
 **Constraints:**
     * Avoid using overly complex kanji, vocabulary, or grammar structures beyond the specified JLPT level.
+    * Even if you want to use nouns which has kanji beyond the scope use hiragana instead.  
 
 **IMPORTANT:** Generate the output as a JSON object with the keys "title" and "body". The "title" should be an intriguing, creative title that captures the essence of the narrative, and the "body" should be the complete story text.
 
 Example output:
 {
-  "title": "運命の戦士: 真夜中の約束",
-  "englishTitle": "Warriors of Fate: The Midnight Oath",
-  "body": "遥かなる夜の闇に、ユウタは己の運命と向き合う…"
+  "title": "",
+  "englishTitle": "",
+  "body": ""
 }
 `;
 };
@@ -67,18 +68,19 @@ You are a distinguished Japanese editor and novelist, renowned for your ability 
 4. **Length:** The article should be approximately ${characterCount} characters long. Ensure that the content meets or exceeds this character count.
 5. **Tone and Style:** Write with clarity, precision, and an inviting tone—akin to a well-edited piece by a seasoned novelist. The narrative should be both educational and enjoyable.
 6. **Cultural Context:** Where applicable, incorporate elements of Japanese culture to enhance the educational experience.
-7. **Commitment to Quality:** Your writing should reflect meticulous editing and thoughtful composition, leaving readers both informed and inspired.
+7. **Commitment to Quality:** Your writing should reflect meticulous editing and thoughtful composition, leaving readers both informed and inspired. Include some unknown facts or trivia to engage the reader.
+
 
 **Constraints:**
     * Avoid using overly complex kanji, vocabulary, or grammar structures beyond the specified JLPT level.
-
+    * Even if you want to use nouns which has kanji beyond the scope use hiragana instead.  
 **IMPORTANT:** Generate the output as a JSON object with the keys "title" and "body". The "title" should be a captivating, creative title that reflects the article’s content, and the "body" should be the complete article text.
 
 Example output:
 {
-  "title": "日本の伝統: 美と知識の探求",
-  "englishTitle": "Exploring Japan's Traditions: A Journey Through Beauty and Wisdom",
-  "body": "日本の伝統文化は、古くから続く美学と知識に彩られています…"
+  "title": "",
+  "englishTitle": "",
+  "body": ""
 }
 `;
 };
@@ -259,7 +261,7 @@ const fetchUserContent = async (req, res) => {
     }
 
     const { jlptLevel, page = 1 } = req.query;
-    const limit = 10;
+    const limit = 5;
     const skip = (page - 1) * limit;
 
     // Build the filter object
@@ -274,7 +276,9 @@ const fetchUserContent = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    return res.status(200).json({ success: true, contents });
+    return res
+      .status(200)
+      .json({ success: true, contents, contentCount: contents.length });
   } catch (error) {
     console.error("Error fetching user content:", error);
     return res.status(500).json({ error: "Internal Server Error" });

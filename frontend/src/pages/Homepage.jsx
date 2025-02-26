@@ -1,15 +1,28 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+} from "react";
 import ContentCard from "../components/partials/ContentCard";
 import { ContentContext } from "../Context/Context";
 import { RiAddFill, RiCloseFill } from "@remixicon/react";
 import GenerationForm from "../components/GenerationForm";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import axios from "../utils/axios";
+import Loader from "../components/partials/Loader";
 
 function Homepage({ setIsLoginBoxVisible }) {
   const [isMobile, setIsMobile] = useState(false);
   const [isGenFormOpen, setIsGenFormOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [page, setPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const observer = useRef();
+
   const {
     user,
     fetchedUser,
@@ -19,10 +32,10 @@ function Homepage({ setIsLoginBoxVisible }) {
     setJlptLevel,
     genratedContentJlptLevel,
     setGeneratedContentJlptLevel,
-    setPage,
     setGeneratedContentPage,
     archiveContent,
     generatedContentArray,
+    setGeneratedContentArray,
   } = useContext(ContentContext);
 
   const isMobileScreen = () => {
@@ -56,6 +69,57 @@ function Homepage({ setIsLoginBoxVisible }) {
     }
   }, [errorMessage, setErrorMessage]);
 
+  const lastContentElementRef = useCallback(
+    (node) => {
+      if (loadingMore || !hasMore) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          console.log("Last element is intersecting");
+          setPage((prevPage) => prevPage + 1);
+        }
+      });
+      if (node) {
+        console.log("Observing last element", node);
+        observer.current.observe(node);
+      }
+    },
+    [loadingMore, hasMore]
+  );
+
+  useEffect(() => {
+    const fetchMoreContent = async () => {
+      setLoadingMore(true);
+      try {
+        const response = await axios.get("/api/fetchCreatedContent", {
+          params: {
+            page,
+            jlptLevel: genratedContentJlptLevel,
+          },
+        });
+        const data = response.data;
+        console.log(data);
+        if (data.success) {
+          setGeneratedContentArray((prevContent) => [
+            ...prevContent,
+            ...data.contents,
+          ]);
+          setHasMore(data.contentCount > page * 5);
+        }
+      } catch (error) {
+        console.error("Error fetching more content:", error);
+      } finally {
+        setLoadingMore(false);
+      }
+    };
+
+    if (page > 1) {
+      console.log("Fetching more content for page", page);
+      fetchMoreContent();
+    }
+  }, [page, genratedContentJlptLevel, setGeneratedContentArray]);
+
+  console.log(generatedContentArray);
   return (
     <div className="w-full h-full overflow-x-hidden overflow-y-scroll pl-15 py-10 relative">
       <div>
@@ -72,6 +136,7 @@ function Homepage({ setIsLoginBoxVisible }) {
               onChange={(e) => {
                 setJlptLevel(e.target.value);
                 setPage(1); // reset page if needed
+                setHasMore(true); // reset hasMore when JLPT level changes
               }}
               className="border border-gray-300 rounded p-2 font-['Ortland']! bg-[#2D2E26] text-[#fcf4e7]"
             >
@@ -143,6 +208,7 @@ function Homepage({ setIsLoginBoxVisible }) {
                 onChange={(e) => {
                   setGeneratedContentJlptLevel(e.target.value);
                   setGeneratedContentPage(1); // reset page if needed
+                  setHasMore(true); // reset hasMore when JLPT level changes
                 }}
                 className="border border-gray-300 rounded p-2 font-['Ortland']! bg-[#2D2E26] text-[#fcf4e7]"
               >
@@ -206,9 +272,20 @@ function Homepage({ setIsLoginBoxVisible }) {
                       GENERATE
                     </span>
                   </div>
-                  {generatedContentArray?.map((contentData, index) => (
-                    <ContentCard key={index} data={contentData} />
-                  ))}
+                  {generatedContentArray?.map((contentData, index) => {
+                    if (generatedContentArray.length === index + 1) {
+                      return (
+                        <ContentCard
+                          ref={lastContentElementRef}
+                          key={index}
+                          data={contentData}
+                        />
+                      );
+                    } else {
+                      return <ContentCard key={index} data={contentData} />;
+                    }
+                  })}
+                  {loadingMore && <Loader />}
                 </>
               ) : (
                 [1, 2, 3, 4, 5].map((_, i) => (
@@ -225,7 +302,7 @@ function Homepage({ setIsLoginBoxVisible }) {
         </div>
       </div>
       {isGenFormOpen && (
-        <div className="absolute left-0 top-0 w-screen h-screen">
+        <div className="fixed left-0 top-0 w-screen h-screen">
           <div
             onClick={() => {
               if (!isGenerating) setIsGenFormOpen(false);

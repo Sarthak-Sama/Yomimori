@@ -2,9 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import kanjiHM from "../../constants/genreKanji";
 
-function ContentCard({ data }) {
+const ContentCard = React.forwardRef(({ data }, ref) => {
   return (
     <Link
+      ref={ref}
       to={`/read/${data._id}`}
       className="w-[15rem] aspect-[4/5] border-2 rounded-xl overflow-hidden"
     >
@@ -26,6 +27,6 @@ function ContentCard({ data }) {
       </div>
     </Link>
   );
-}
+});
 
 export default ContentCard;

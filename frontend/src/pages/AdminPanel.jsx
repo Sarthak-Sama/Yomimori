@@ -68,11 +68,12 @@ const AdminPanel = () => {
       if (response.data.success) {
         setSuccessMessage("Content created successfully!");
         // Clear the form fields after successful submission
-        // setTitle("");
-        // setBody("");
-        // setJLPTLevel("");
-        // setGenre("");
-        // setContentType("");
+        setTitle("");
+        setEnglishTitle("");
+        setBody("");
+        setJLPTLevel("");
+        setGenre("");
+        setContentType("");
       } else {
         setError("Error creating content.");
       }
