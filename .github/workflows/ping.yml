@@ -1,0 +1,13 @@
+name: Ping Yomimori
+
+# This workflow runs on a schedule
+on:
+  schedule:
+    - cron: '*/14 * * * *'  # This cron expression means every 14 minutes
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping the backend endpoint
+        run: curl -s https://yomimori.onrender.com > /dev/null
