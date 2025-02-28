@@ -185,6 +185,11 @@ function GenerationForm({ setIsGenFormOpen, isGenerating, setIsGenerating }) {
           >
             {isGenerating ? "Generating..." : "Generate"}
           </button>
+          {isGenerating && (
+            <p className="w-full text-center text-xs mt-3">
+              Wait 1-2 min while our writer creates your content.
+            </p>
+          )}
         </div>
       </form>
     </div>
