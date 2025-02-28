@@ -129,8 +129,8 @@ const generateContent = async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: "User not found." });
     }
-  } catch (err) {
-    console.error("Error finding user:", err);
+  } catch (error) {
+    console.error("Error finding user:", error);
     return res.status(500).json({ error });
   }
 
@@ -165,7 +165,7 @@ const generateContent = async (req, res) => {
 
   // Build a detailed prompt for the Gemini API
   const prompt =
-    contentType.toLowerCase === "fiction"
+    contentType.toLowerCase() === "fiction"
       ? buildFictionPrompt(genre, jlptLevel, characterCount)
       : buildNonFictionPrompt(genre, jlptLevel, characterCount);
 
