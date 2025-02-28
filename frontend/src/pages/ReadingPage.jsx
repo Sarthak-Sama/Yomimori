@@ -17,7 +17,7 @@ function ReadingPage() {
   const [popupPosition, setPopupPosition] = useState({ left: 0, top: 0 });
   const [openContent, setOpenContent] = useState(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const longPressTimerRef = useRef(null);
+  let lastTokenValue = "";
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -184,6 +184,14 @@ function ReadingPage() {
         {openContent && openContent.tokens ? (
           openContent.tokens.map((token, index) => {
             if (!token) return null; // Skip undefined/null tokens
+            if (token.surface === "/n") return <br key={index} />;
+            else if (token.surface === "/") {
+              lastTokenValue = "/";
+              return null;
+            } else if (token.surface === "n" && lastTokenValue === "/") {
+              lastTokenValue = "";
+              return <br key={index} />;
+            }
             return (
               <span
                 key={index}

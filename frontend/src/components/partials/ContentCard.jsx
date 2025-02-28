@@ -15,7 +15,7 @@ const ContentCard = React.forwardRef(({ data }, ref) => {
         >
           {kanjiHM[data.genre]}
         </span>
-        <span className="uppercase tracking-[0.5rem] group-hover:text-[#e94545] transition-all duration-300 ease-in-out">
+        <span className="uppercase tracking-[0.4rem] group-hover:text-[#e94545] transition-all duration-300 ease-in-out text-center max-w-[95%]">
           {data.genre}
         </span>
       </div>

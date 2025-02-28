@@ -47,7 +47,7 @@ You are a legendary Japanese manga and story writer, celebrated for your work in
     * Avoid using overly complex kanji, vocabulary, or grammar structures beyond the specified JLPT level.
     * Even if you want to use nouns which has kanji beyond the scope use hiragana instead.  
 
-**IMPORTANT:** Generate the output as a JSON object with the keys "title" and "body". The "title" should be an intriguing, creative title that captures the essence of the narrative, and the "body" should be the complete story text.
+**IMPORTANT:** Generate the output as a JSON object with the keys "title" and "body". The "title" should be a captivating, creative title that reflects the article’s content, and the "body" should be the complete article text. Don't break line after every sentence, instead use '/n' ONLY to break the paragraph. Don't add unnecessary spaces between the words.
 
 Example output:
 {
@@ -74,7 +74,7 @@ You are a distinguished Japanese editor and novelist, renowned for your ability 
 **Constraints:**
     * Avoid using overly complex kanji, vocabulary, or grammar structures beyond the specified JLPT level.
     * Even if you want to use nouns which has kanji beyond the scope use hiragana instead.  
-**IMPORTANT:** Generate the output as a JSON object with the keys "title" and "body". The "title" should be a captivating, creative title that reflects the article’s content, and the "body" should be the complete article text.
+**IMPORTANT:** Generate the output as a JSON object with the keys "title" and "body". The "title" should be a captivating, creative title that reflects the article’s content, and the "body" should be the complete article text. Don't break line after every sentence, instead use '/n' ONLY to break the paragraph. Don't add unnecessary spaces between the words.
 
 Example output:
 {
